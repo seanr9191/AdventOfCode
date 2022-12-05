@@ -14,16 +14,16 @@ type Day5 struct {
 	Logger    *zap.SugaredLogger
 }
 
-func peek(stack []string) string {
+func peekFirst(stack []string) string {
 	return stack[0]
 }
 
-func pop(stack []string) ([]string, string) {
+func shift(stack []string) ([]string, string) {
 	crate := stack[0]
 	return stack[1:], crate
 }
 
-func popMany(stack []string, num int) ([]string, []string) {
+func shiftMany(stack []string, num int) ([]string, []string) {
 	crates := stack[0:num]
 	return stack[num:], crates
 }
@@ -101,7 +101,7 @@ func (d *Day5) Part1() (interface{}, error) {
 			}
 
 			for n := 0; n < numToMove; n++ {
-				s, crate := pop(stacks[from-1])
+				s, crate := shift(stacks[from-1])
 				stacks[from-1] = s
 				stacks[to-1] = prepend(stacks[to-1], crate)
 			}
@@ -110,7 +110,7 @@ func (d *Day5) Part1() (interface{}, error) {
 
 	result := ""
 	for i := 0; i < len(stacks); i++ {
-		result += peek(stacks[i])
+		result += peekFirst(stacks[i])
 	}
 
 	return result, nil
@@ -155,7 +155,7 @@ func (d *Day5) Part2() (interface{}, error) {
 				return nil, err
 			}
 
-			s, crates := popMany(stacks[from-1], numToMove)
+			s, crates := shiftMany(stacks[from-1], numToMove)
 			stacks[from-1] = s
 			stacks[to-1] = prependMany(stacks[to-1], crates)
 		}
@@ -163,7 +163,7 @@ func (d *Day5) Part2() (interface{}, error) {
 
 	result := ""
 	for i := 0; i < len(stacks); i++ {
-		result += peek(stacks[i])
+		result += peekFirst(stacks[i])
 	}
 
 	return result, nil
