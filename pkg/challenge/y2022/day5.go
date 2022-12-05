@@ -35,13 +35,23 @@ func prepend(stack []string, crate string) []string {
 	return stack
 }
 
-func prependMany(stack []string, crates []string) []string {
+func prependMany(stack []string, crates []string, reverse bool) []string {
+	if reverse {
+		crates = reverseSlice(crates)
+	}
 	for i := 0; i < len(crates); i++ {
 		stack = append(stack, "")
 	}
 	copy(stack[len(crates):], stack)
 	for i := 0; i < len(crates); i++ {
 		stack[i] = crates[i]
+	}
+	return stack
+}
+
+func reverseSlice(stack []string) []string {
+	for i, j := 0, len(stack)-1; i < j; i, j = i+1, j-1 {
+		stack[i], stack[j] = stack[j], stack[i]
 	}
 	return stack
 }
@@ -69,9 +79,10 @@ func (d *Day5) Part1() (interface{}, error) {
 	}
 
 	stacks := make([][]string, 9)
-	for i, line := range lines {
-
-		if i <= 7 {
+	moves := 0
+	for _, line := range lines {
+		cleanLine := strings.ReplaceAll(line, " ", "")
+		if strings.HasPrefix(cleanLine, "[") {
 			// Reading crates
 			// line has len of 3 per crate/stack. Need to parse 3 characters at a time
 			runeLine := []rune(line)
@@ -81,8 +92,8 @@ func (d *Day5) Part1() (interface{}, error) {
 					stacks[ind] = append(stacks[ind], string(chunk[1]))
 				}
 			}
-		} else if i >= 10 {
-			// Moves start on 10
+		} else if strings.HasPrefix(cleanLine, "move") {
+			// Processing moves
 			line = strings.ReplaceAll(line, "move ", "")
 			line = strings.ReplaceAll(line, " from ", ",")
 			line = strings.ReplaceAll(line, " to ", ",")
@@ -100,10 +111,12 @@ func (d *Day5) Part1() (interface{}, error) {
 				return nil, err
 			}
 
-			for n := 0; n < numToMove; n++ {
-				s, crate := shift(stacks[from-1])
-				stacks[from-1] = s
-				stacks[to-1] = prepend(stacks[to-1], crate)
+			s, crates := shiftMany(stacks[from-1], numToMove)
+			stacks[from-1] = s
+			stacks[to-1] = prependMany(stacks[to-1], crates, true)
+			moves++
+			if moves%10000 == 0 {
+				d.Logger.Infof("Completed move %v.", moves)
 			}
 		}
 	}
@@ -124,9 +137,10 @@ func (d *Day5) Part2() (interface{}, error) {
 	}
 
 	stacks := make([][]string, 9)
-	for i, line := range lines {
-
-		if i <= 7 {
+	moves := 0
+	for _, line := range lines {
+		cleanLine := strings.ReplaceAll(line, " ", "")
+		if strings.HasPrefix(cleanLine, "[") {
 			// Reading crates
 			// line has len of 3 per crate/stack. Need to parse 3 characters at a time
 			runeLine := []rune(line)
@@ -136,7 +150,7 @@ func (d *Day5) Part2() (interface{}, error) {
 					stacks[ind] = append(stacks[ind], string(chunk[1]))
 				}
 			}
-		} else if i >= 10 {
+		} else if strings.HasPrefix(cleanLine, "move") {
 			// Moves start on 10
 			line = strings.ReplaceAll(line, "move ", "")
 			line = strings.ReplaceAll(line, " from ", ",")
@@ -157,7 +171,11 @@ func (d *Day5) Part2() (interface{}, error) {
 
 			s, crates := shiftMany(stacks[from-1], numToMove)
 			stacks[from-1] = s
-			stacks[to-1] = prependMany(stacks[to-1], crates)
+			stacks[to-1] = prependMany(stacks[to-1], crates, false)
+			moves++
+			if moves%10000 == 0 {
+				d.Logger.Infof("Completed move %v.", moves)
+			}
 		}
 	}
 
