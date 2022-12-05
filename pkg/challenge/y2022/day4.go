@@ -1,53 +1,26 @@
 package y2022
 
 import (
+	"AdventOfCode/pkg/data_structure/boundary"
 	"AdventOfCode/pkg/io/file"
 	"go.uber.org/zap"
 	"strconv"
 	"strings"
 )
 
-type bound struct {
-	Upper int
-	Lower int
-}
-
-func newBound(input string) (*bound, error) {
+func parseBounds(input string) (int, int, error) {
 	parts := strings.Split(input, "-")
 	lower, err := strconv.Atoi(parts[0])
 	if err != nil {
-		return nil, err
+		return 0, 0, err
 	}
 
 	upper, err := strconv.Atoi(parts[1])
 	if err != nil {
-		return nil, err
+		return 0, 0, err
 	}
 
-	return &bound{
-		Upper: upper,
-		Lower: lower,
-	}, nil
-}
-
-func (b *bound) Encompasses(other *bound) bool {
-	return b.Lower <= other.Lower && b.Upper >= other.Upper
-}
-
-func (b *bound) Encompassed(other *bound) bool {
-	return other.Lower <= b.Lower && other.Upper >= b.Upper
-}
-
-func (b *bound) Overlaps(other *bound) bool {
-	if b.Encompassed(other) || b.Encompasses(other) {
-		return true
-	}
-
-	if b.Lower <= other.Lower {
-		return other.Lower <= b.Upper
-	} else {
-		return other.Upper >= b.Lower
-	}
+	return lower, upper, nil
 }
 
 type Day4 struct {
@@ -82,16 +55,26 @@ func (d *Day4) Part1() (interface{}, error) {
 	encompassed := 0
 	for _, line := range lines {
 		bounds := strings.Split(line, ",")
-		first, err := newBound(bounds[0])
+		l1, u1, err := parseBounds(bounds[0])
 		if err != nil {
 			return nil, err
 		}
-		second, err := newBound(bounds[1])
+		l2, u2, err := parseBounds(bounds[1])
 		if err != nil {
 			return nil, err
 		}
 
-		if first.Encompassed(second) || first.Encompasses(second) {
+		firstElf := &boundary.Boundary{
+			Lower: l1,
+			Upper: u1,
+		}
+
+		secondElf := &boundary.Boundary{
+			Lower: l2,
+			Upper: u2,
+		}
+
+		if firstElf.EncompassedBy(secondElf) || firstElf.Encompasses(secondElf) {
 			encompassed++
 		}
 	}
@@ -109,16 +92,26 @@ func (d *Day4) Part2() (interface{}, error) {
 	overlaps := 0
 	for _, line := range lines {
 		bounds := strings.Split(line, ",")
-		first, err := newBound(bounds[0])
+		l1, u1, err := parseBounds(bounds[0])
 		if err != nil {
 			return nil, err
 		}
-		second, err := newBound(bounds[1])
+		l2, u2, err := parseBounds(bounds[1])
 		if err != nil {
 			return nil, err
 		}
 
-		if first.Overlaps(second) {
+		firstElf := &boundary.Boundary{
+			Lower: l1,
+			Upper: u1,
+		}
+
+		secondElf := &boundary.Boundary{
+			Lower: l2,
+			Upper: u2,
+		}
+
+		if firstElf.Overlaps(secondElf) {
 			overlaps++
 		}
 	}

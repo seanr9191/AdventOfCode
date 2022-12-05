@@ -1,6 +1,7 @@
 package y2022
 
 import (
+	"AdventOfCode/pkg/data_structure/slice"
 	"AdventOfCode/pkg/io/file"
 	"go.uber.org/zap"
 )
@@ -55,7 +56,7 @@ func (e *elfGroup) TotalPriority() int {
 	intersect := []rune(e.rucksacks[0].items)
 	for i, _ := range e.rucksacks {
 		if i > 0 {
-			intersect = intersection(intersect, []rune(e.rucksacks[i].items))
+			intersect = slice.Intersection(intersect, []rune(e.rucksacks[i].items))
 		}
 	}
 
@@ -75,7 +76,7 @@ func (r *rucksack) TotalPriority() int {
 	compartmentTwo := r.compartments[1]
 
 	priority := 0
-	intersect := intersection(compartmentOne.items, compartmentTwo.items)
+	intersect := slice.Intersection(compartmentOne.items, compartmentTwo.items)
 
 	countedItems := make(map[rune]bool)
 	for _, item := range intersect {
@@ -86,21 +87,6 @@ func (r *rucksack) TotalPriority() int {
 	}
 
 	return priority
-}
-
-func intersection(s1 []rune, s2 []rune) []rune {
-	var intersection []rune
-	hash := make(map[rune]bool)
-	for _, item := range s1 {
-		hash[item] = true
-	}
-	for _, item := range s2 {
-		if hash[item] {
-			intersection = append(intersection, item)
-		}
-	}
-
-	return intersection
 }
 
 func getPriority(item rune) int {

@@ -13,14 +13,14 @@ type Day2 struct {
 	Logger    *zap.SugaredLogger
 }
 
-type Battle struct {
-	opposing Move
-	personal Move
+type battle struct {
+	opposing move
+	personal move
 }
 
-type Move string
+type move string
 
-func (m Move) GetWinningMove() Move {
+func (m move) GetWinningMove() move {
 	switch m {
 	case "A":
 		return "C"
@@ -33,7 +33,7 @@ func (m Move) GetWinningMove() Move {
 	return ""
 }
 
-func (m Move) GetLosingMove() Move {
+func (m move) GetLosingMove() move {
 	switch m {
 	case "A":
 		return "B"
@@ -46,13 +46,13 @@ func (m Move) GetLosingMove() Move {
 	return ""
 }
 
-var matchingMoves = map[Move]Move{
-	Move("X"): Move("A"),
-	Move("Y"): Move("B"),
-	Move("Z"): Move("C"),
+var matchingMoves = map[move]move{
+	move("X"): move("A"),
+	move("Y"): move("B"),
+	move("Z"): move("C"),
 }
 
-func (b *Battle) ChoiceScore() int {
+func (b *battle) ChoiceScore() int {
 	switch b.personal {
 	case "A":
 		return 1
@@ -65,7 +65,7 @@ func (b *Battle) ChoiceScore() int {
 	return 0
 }
 
-func (b *Battle) ResultScore() int {
+func (b *battle) ResultScore() int {
 	if b.personal.GetWinningMove() == b.opposing {
 		return 6
 	} else if b.personal.GetLosingMove() == b.opposing {
@@ -100,14 +100,14 @@ func (d *Day2) Part1() (interface{}, error) {
 	totalScore := 0
 	for _, line := range lines {
 		moves := strings.Split(line, " ")
-		battle := &Battle{
-			opposing: Move(moves[0]),
-			personal: matchingMoves[Move(moves[1])],
+		battle := &battle{
+			opposing: move(moves[0]),
+			personal: matchingMoves[move(moves[1])],
 		}
 
 		totalScore += battle.ChoiceScore() + battle.ResultScore()
 
-		// d.Logger.Infof("Opponent: %v, You: %v, Choice Score: %v, Result Score: %v, Total Score: %v", moves[0], matchingMoves[Move(moves[1])], battle.ChoiceScore(), battle.ResultScore(), totalScore)
+		// d.Logger.Infof("Opponent: %v, You: %v, Choice Score: %v, Result Score: %v, Total Score: %v", moves[0], matchingMoves[move(moves[1])], battle.ChoiceScore(), battle.ResultScore(), totalScore)
 	}
 
 	return totalScore, nil
@@ -124,8 +124,8 @@ func (d *Day2) Part2() (interface{}, error) {
 	for _, line := range lines {
 		moves := strings.Split(line, " ")
 
-		opponentMove := Move(moves[0])
-		var actualMove Move
+		opponentMove := move(moves[0])
+		var actualMove move
 		switch moves[1] {
 		case "X":
 			actualMove = opponentMove.GetWinningMove()
@@ -135,14 +135,14 @@ func (d *Day2) Part2() (interface{}, error) {
 			actualMove = opponentMove.GetLosingMove()
 		}
 
-		battle := &Battle{
+		battle := &battle{
 			opposing: opponentMove,
 			personal: actualMove,
 		}
 
 		totalScore += battle.ChoiceScore() + battle.ResultScore()
 
-		// d.Logger.Infof("Battle %v, Opponent: %v, You: %v, Choice Score: %v, Result Score: %v, Total Score: %v", i, moves[0], moves[1], battle.ChoiceScore(), battle.ResultScore(), totalScore)
+		// d.Logger.Infof("battle %v, Opponent: %v, You: %v, Choice Score: %v, Result Score: %v, Total Score: %v", i, moves[0], moves[1], battle.ChoiceScore(), battle.ResultScore(), totalScore)
 	}
 
 	return totalScore, nil
