@@ -39,14 +39,11 @@ func prependMany(stack []string, crates []string, reverse bool) []string {
 	if reverse {
 		crates = reverseSlice(crates)
 	}
-	for i := 0; i < len(crates); i++ {
-		stack = append(stack, "")
-	}
-	copy(stack[len(crates):], stack)
-	for i := 0; i < len(crates); i++ {
-		stack[i] = crates[i]
-	}
-	return stack
+
+	newStack := make([]string, len(crates)+len(stack))
+	copy(newStack[:len(crates)], crates)
+	copy(newStack[len(crates):], stack)
+	return newStack
 }
 
 func reverseSlice(stack []string) []string {
@@ -113,7 +110,8 @@ func (d *Day5) Part1() (interface{}, error) {
 
 			s, crates := shiftMany(stacks[from-1], numToMove)
 			stacks[from-1] = s
-			stacks[to-1] = prependMany(stacks[to-1], crates, true)
+			p := prependMany(stacks[to-1], crates, true)
+			stacks[to-1] = p
 			moves++
 			if moves%10000 == 0 {
 				d.Logger.Infof("Completed move %v.", moves)
