@@ -1,10 +1,12 @@
 package main
 
 import (
-	"AdventOfCode/pkg/challenge/y2022"
-	"AdventOfCode/pkg/concurrency/worker"
-	"go.uber.org/zap"
 	"log"
+
+	"go.uber.org/zap"
+
+	"github.com/seanr9191/AdventOfCode/pkg/challenge/y2022"
+	"github.com/seanr9191/AdventOfCode/pkg/concurrency/worker"
 )
 
 func main() {
@@ -24,7 +26,6 @@ func main() {
 	pool := worker.NewPool(1, sugar)
 
 	go func() {
-
 		d1 := y2022.Day1{
 			Year:      2022,
 			Day:       1,

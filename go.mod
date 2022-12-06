@@ -1,4 +1,4 @@
-module AdventOfCode
+module github.com/seanr9191/AdventOfCode
 
 go 1.19
 

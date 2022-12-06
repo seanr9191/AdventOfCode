@@ -1,8 +1,9 @@
 package worker
 
 import (
-	"go.uber.org/zap"
 	"sync"
+
+	"go.uber.org/zap"
 )
 
 type pool struct {
@@ -78,7 +79,6 @@ func (w *worker) Work() {
 			w.logger.Errorf("Worker %v encountered an error with a job %v. %v+", w.id, job.id, err)
 		}
 	}
-
 }
 
 func NewJob(id int, workFunc WorkFunc) *job {

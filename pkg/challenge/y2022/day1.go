@@ -1,10 +1,12 @@
 package y2022
 
 import (
-	"AdventOfCode/pkg/io/file"
-	"go.uber.org/zap"
 	"sort"
 	"strconv"
+
+	"go.uber.org/zap"
+
+	"github.com/seanr9191/AdventOfCode/pkg/io/file"
 )
 
 type Day1 struct {
@@ -30,7 +32,6 @@ func (d *Day1) Solve() error {
 }
 
 func (d *Day1) Part1() (interface{}, error) {
-
 	fr := file.Reader{Path: d.InputFile}
 	lines, err := fr.GetContents()
 	if err != nil {

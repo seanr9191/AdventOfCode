@@ -1,9 +1,11 @@
 package y2022
 
 import (
-	"AdventOfCode/pkg/io/file"
-	"go.uber.org/zap"
 	"strings"
+
+	"go.uber.org/zap"
+
+	"github.com/seanr9191/AdventOfCode/pkg/io/file"
 )
 
 type Day2 struct {

@@ -1,11 +1,13 @@
 package y2022
 
 import (
-	"AdventOfCode/pkg/data_structure/slice"
-	"AdventOfCode/pkg/io/file"
-	"go.uber.org/zap"
 	"strconv"
 	"strings"
+
+	"github.com/seanr9191/AdventOfCode/pkg/data_structure/slice"
+	"github.com/seanr9191/AdventOfCode/pkg/io/file"
+
+	"go.uber.org/zap"
 )
 
 type Day5 struct {

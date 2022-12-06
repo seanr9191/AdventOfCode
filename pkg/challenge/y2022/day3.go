@@ -1,9 +1,10 @@
 package y2022
 
 import (
-	"AdventOfCode/pkg/data_structure/slice"
-	"AdventOfCode/pkg/io/file"
 	"go.uber.org/zap"
+
+	"github.com/seanr9191/AdventOfCode/pkg/data_structure/slice"
+	"github.com/seanr9191/AdventOfCode/pkg/io/file"
 )
 
 type Day3 struct {
@@ -51,10 +52,9 @@ func newCompartment(items []rune) *compartment {
 }
 
 func (e *elfGroup) TotalPriority() int {
-
 	priority := 0
 	intersect := []rune(e.rucksacks[0].items)
-	for i, _ := range e.rucksacks {
+	for i := range e.rucksacks {
 		if i > 0 {
 			intersect = slice.Intersection(intersect, []rune(e.rucksacks[i].items))
 		}
@@ -126,7 +126,7 @@ func (d *Day3) Part1() (interface{}, error) {
 		priority := rucksack.TotalPriority()
 		totalPriority += priority
 
-		//d.Logger.Infof("Rucksack %v, Priority: %v, Cumulative: %v", i, priority, totalPriority)
+		// d.Logger.Infof("Rucksack %v, Priority: %v, Cumulative: %v", i, priority, totalPriority)
 	}
 
 	return totalPriority, nil
@@ -150,7 +150,7 @@ func (d *Day3) Part2() (interface{}, error) {
 			eg := &elfGroup{rucksacks: rucksacks}
 			priority := eg.TotalPriority()
 			totalPriority += priority
-			//d.Logger.Infof("Group %v, Priority: %v, Cumulative: %v", groupCount, priority, totalPriority)
+			// d.Logger.Infof("Group %v, Priority: %v, Cumulative: %v", groupCount, priority, totalPriority)
 
 			rucksacks = rucksacks[:0]
 		}

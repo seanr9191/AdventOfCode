@@ -1,11 +1,13 @@
 package y2022
 
 import (
-	"AdventOfCode/pkg/data_structure/boundary"
-	"AdventOfCode/pkg/io/file"
-	"go.uber.org/zap"
 	"strconv"
 	"strings"
+
+	"go.uber.org/zap"
+
+	"github.com/seanr9191/AdventOfCode/pkg/data_structure/boundary"
+	"github.com/seanr9191/AdventOfCode/pkg/io/file"
 )
 
 func parseBounds(input string) (int, int, error) {
