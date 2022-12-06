@@ -1,6 +1,7 @@
 package y2022
 
 import (
+	"AdventOfCode/pkg/data_structure/slice"
 	"AdventOfCode/pkg/io/file"
 	"go.uber.org/zap"
 	"strconv"
@@ -12,45 +13,6 @@ type Day5 struct {
 	Day       int
 	InputFile string
 	Logger    *zap.SugaredLogger
-}
-
-func peekFirst(stack []string) string {
-	return stack[0]
-}
-
-func shift(stack []string) ([]string, string) {
-	crate := stack[0]
-	return stack[1:], crate
-}
-
-func shiftMany(stack []string, num int) ([]string, []string) {
-	crates := stack[0:num]
-	return stack[num:], crates
-}
-
-func prepend(stack []string, crate string) []string {
-	stack = append(stack, "")
-	copy(stack[1:], stack)
-	stack[0] = crate
-	return stack
-}
-
-func prependMany(stack []string, crates []string, reverse bool) []string {
-	if reverse {
-		crates = reverseSlice(crates)
-	}
-
-	newStack := make([]string, len(crates)+len(stack))
-	copy(newStack[:len(crates)], crates)
-	copy(newStack[len(crates):], stack)
-	return newStack
-}
-
-func reverseSlice(stack []string) []string {
-	for i, j := 0, len(stack)-1; i < j; i, j = i+1, j-1 {
-		stack[i], stack[j] = stack[j], stack[i]
-	}
-	return stack
 }
 
 func (d *Day5) Solve() error {
@@ -91,26 +53,24 @@ func (d *Day5) Part1() (interface{}, error) {
 			}
 		} else if strings.HasPrefix(cleanLine, "move") {
 			// Processing moves
-			line = strings.ReplaceAll(line, "move ", "")
-			line = strings.ReplaceAll(line, " from ", ",")
-			line = strings.ReplaceAll(line, " to ", ",")
-			pieces := strings.Split(line, ",")
-			numToMove, err := strconv.Atoi(pieces[0])
+			pieces := strings.Split(line, " ")
+			numToMove, err := strconv.Atoi(pieces[1])
 			if err != nil {
 				return nil, err
 			}
-			from, err := strconv.Atoi(pieces[1])
+			from, err := strconv.Atoi(pieces[3])
 			if err != nil {
 				return nil, err
 			}
-			to, err := strconv.Atoi(pieces[2])
+			to, err := strconv.Atoi(pieces[5])
 			if err != nil {
 				return nil, err
 			}
 
-			s, crates := shiftMany(stacks[from-1], numToMove)
+			s, crates := slice.ShiftMany(stacks[from-1], numToMove)
 			stacks[from-1] = s
-			p := prependMany(stacks[to-1], crates, true)
+			crates = slice.Reverse(crates)
+			p := slice.PrependMany(stacks[to-1], crates)
 			stacks[to-1] = p
 			moves++
 			if moves%10000 == 0 {
@@ -121,7 +81,7 @@ func (d *Day5) Part1() (interface{}, error) {
 
 	result := ""
 	for i := 0; i < len(stacks); i++ {
-		result += peekFirst(stacks[i])
+		result += slice.PeekFirst(stacks[i])
 	}
 
 	return result, nil
@@ -149,27 +109,24 @@ func (d *Day5) Part2() (interface{}, error) {
 				}
 			}
 		} else if strings.HasPrefix(cleanLine, "move") {
-			// Moves start on 10
-			line = strings.ReplaceAll(line, "move ", "")
-			line = strings.ReplaceAll(line, " from ", ",")
-			line = strings.ReplaceAll(line, " to ", ",")
-			pieces := strings.Split(line, ",")
-			numToMove, err := strconv.Atoi(pieces[0])
+			// Processing moves
+			pieces := strings.Split(line, " ")
+			numToMove, err := strconv.Atoi(pieces[1])
 			if err != nil {
 				return nil, err
 			}
-			from, err := strconv.Atoi(pieces[1])
+			from, err := strconv.Atoi(pieces[3])
 			if err != nil {
 				return nil, err
 			}
-			to, err := strconv.Atoi(pieces[2])
+			to, err := strconv.Atoi(pieces[5])
 			if err != nil {
 				return nil, err
 			}
 
-			s, crates := shiftMany(stacks[from-1], numToMove)
+			s, crates := slice.ShiftMany(stacks[from-1], numToMove)
 			stacks[from-1] = s
-			stacks[to-1] = prependMany(stacks[to-1], crates, false)
+			stacks[to-1] = slice.PrependMany(stacks[to-1], crates)
 			moves++
 			if moves%10000 == 0 {
 				d.Logger.Infof("Completed move %v.", moves)
@@ -179,7 +136,7 @@ func (d *Day5) Part2() (interface{}, error) {
 
 	result := ""
 	for i := 0; i < len(stacks); i++ {
-		result += peekFirst(stacks[i])
+		result += slice.PeekFirst(stacks[i])
 	}
 
 	return result, nil
