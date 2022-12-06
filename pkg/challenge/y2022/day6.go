@@ -13,6 +13,29 @@ type Day6 struct {
 	Logger    *zap.SugaredLogger
 }
 
+type System struct {
+	signal     string
+	markerSize int
+}
+
+func (s *System) FindFirstMarker() int {
+	for i := range s.signal {
+		foundData := make(map[rune]bool)
+		for p := 0; p < s.markerSize; p++ {
+			curr := rune(s.signal[i+p])
+			if foundData[curr] {
+				break
+			}
+			foundData[curr] = true
+		}
+		if len(foundData) == s.markerSize {
+			return i + s.markerSize
+		}
+	}
+
+	return -1
+}
+
 func (d *Day6) Solve() error {
 	a1, err := d.Part1()
 	if err != nil {
@@ -35,11 +58,8 @@ func (d *Day6) Part1() (interface{}, error) {
 		return nil, err
 	}
 
-	for _, line := range lines {
-		d.Logger.Info(line)
-	}
-
-	return 0, nil
+	system := System{signal: lines[0], markerSize: 4}
+	return system.FindFirstMarker(), nil
 }
 
 func (d *Day6) Part2() (interface{}, error) {
@@ -49,9 +69,6 @@ func (d *Day6) Part2() (interface{}, error) {
 		return nil, err
 	}
 
-	for _, line := range lines {
-		d.Logger.Info(line)
-	}
-
-	return 0, nil
+	system := System{signal: lines[0], markerSize: 14}
+	return system.FindFirstMarker(), nil
 }
