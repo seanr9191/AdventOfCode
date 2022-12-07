@@ -56,7 +56,7 @@ func (e *elfGroup) TotalPriority() int {
 	intersect := []rune(e.rucksacks[0].items)
 	for i := range e.rucksacks {
 		if i > 0 {
-			intersect = slice.Intersection(intersect, []rune(e.rucksacks[i].items))
+			intersect = slice.Intersect(intersect, []rune(e.rucksacks[i].items))
 		}
 	}
 
@@ -76,7 +76,7 @@ func (r *rucksack) TotalPriority() int {
 	compartmentTwo := r.compartments[1]
 
 	priority := 0
-	intersect := slice.Intersection(compartmentOne.items, compartmentTwo.items)
+	intersect := slice.Intersect(compartmentOne.items, compartmentTwo.items)
 
 	countedItems := make(map[rune]bool)
 	for _, item := range intersect {

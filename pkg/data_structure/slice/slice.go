@@ -1,6 +1,6 @@
 package slice
 
-func Intersection[K comparable](s1 []K, s2 []K) []K {
+func Intersect[K comparable](s1 []K, s2 []K) []K {
 	var intersection []K
 	hash := make(map[K]bool)
 	for _, item := range s1 {
