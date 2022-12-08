@@ -11,7 +11,9 @@ type Reader struct {
 
 func (fr *Reader) GetContents() ([]string, error) {
 	file, err := os.Open(fr.Path)
-	defer file.Close()
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
 	if err != nil {
 		return nil, err
 	}
