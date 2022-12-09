@@ -98,6 +98,15 @@ func main() {
 		job = worker.NewJob(8, d8.Solve)
 		pool.SubmitJob(job)
 
+		d9 := y2022.Day9{
+			Year:      2022,
+			Day:       9,
+			InputFile: "./assets/2022/day9/input.txt",
+			Logger:    sugar,
+		}
+		job = worker.NewJob(9, d9.Solve)
+		pool.SubmitJob(job)
+
 		pool.Stop()
 	}()
 
