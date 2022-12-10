@@ -109,7 +109,6 @@ func (d *Day10) Part2() (interface{}, error) {
 		return nil, err
 	}
 
-	totalStrength := 0
 	cpu := cpu{Register: 2, CycleCount: 0}
 	for _, instruction := range lines {
 		registerMovement, err := cpu.cycle(instruction)
@@ -144,5 +143,5 @@ func (d *Day10) Part2() (interface{}, error) {
 		}
 	}
 
-	return totalStrength, nil
+	return "See Output Above - PGHFGLUG", nil
 }
