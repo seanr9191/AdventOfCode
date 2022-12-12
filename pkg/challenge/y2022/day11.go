@@ -1,7 +1,6 @@
 package y2022
 
 import (
-	"math/big"
 	"sort"
 	"strconv"
 	"strings"
@@ -23,33 +22,26 @@ type (
 	test      func(int64, int64) bool
 )
 
-var (
-	monkeys     []*monkey
-	fallbackInt = big.NewInt(-1)
-)
+var monkeys []*monkey
 
 type monkey struct {
-	Items           []*item
-	Operation       operation
-	Operand         int64
-	Test            test
-	TestVal         int64
-	PassVal         int64
-	FailVal         int64
-	InspectionCount int64
-	WorryDivisor    int64
-	ShouldMod       bool
+	Items             []*item
+	Operation         operation
+	Operand           int64
+	Test              test
+	TestVal           int64
+	PassVal           int64
+	FailVal           int64
+	InspectionCount   int64
+	SimplifyOperation operation
+	SimplifyOperand   int64
 }
 
 func (m *monkey) TestItems() {
 	for _, item := range m.Items {
 		m.InspectionCount++
 		item.WorryLevel = m.Operation(item.WorryLevel, m.Operand)
-		if m.ShouldMod {
-			item.WorryLevel %= m.WorryDivisor
-		} else {
-			item.WorryLevel /= m.WorryDivisor
-		}
+		item.WorryLevel = m.SimplifyOperation(item.WorryLevel, m.SimplifyOperand)
 		passesTest := m.Test(item.WorryLevel, m.TestVal)
 		if passesTest {
 			monkeys[m.PassVal].Items = append(monkeys[m.PassVal].Items, item)
@@ -76,6 +68,14 @@ func multiply(old int64, multiplier int64) int64 {
 		multiplier = old
 	}
 	return old * multiplier
+}
+
+func divide(old int64, divisor int64) int64 {
+	return old / divisor
+}
+
+func mod(old int64, modulo int64) int64 {
+	return old % modulo
 }
 
 func divisible(value int64, divisor int64) bool {
@@ -112,8 +112,9 @@ func (d *Day11) Part1() (interface{}, error) {
 				monkeys = append(monkeys, currMonkey)
 			}
 			currMonkey = &monkey{
-				Items:        make([]*item, 0),
-				WorryDivisor: 3,
+				Items:             make([]*item, 0),
+				SimplifyOperation: divide,
+				SimplifyOperand:   3,
 			}
 		} else if strings.HasPrefix(line, "  Starting items: ") {
 			itemLevels := strings.Split(strings.ReplaceAll(line, "  Starting items: ", ""), ", ")
@@ -198,7 +199,7 @@ func (d *Day11) Part2() (interface{}, error) {
 	}
 
 	monkeys = make([]*monkey, 0)
-	div := 1
+	modulo := int64(1)
 	var currMonkey *monkey
 	for _, line := range lines {
 		if strings.HasPrefix(line, "Monkey ") {
@@ -206,8 +207,8 @@ func (d *Day11) Part2() (interface{}, error) {
 				monkeys = append(monkeys, currMonkey)
 			}
 			currMonkey = &monkey{
-				Items:        make([]*item, 0),
-				WorryDivisor: 1,
+				Items:             make([]*item, 0),
+				SimplifyOperation: mod,
 			}
 		} else if strings.HasPrefix(line, "  Starting items: ") {
 			itemLevels := strings.Split(strings.ReplaceAll(line, "  Starting items: ", ""), ", ")
@@ -243,7 +244,7 @@ func (d *Day11) Part2() (interface{}, error) {
 			if err != nil {
 				return nil, err
 			}
-			div *= divisor
+			modulo *= int64(divisor)
 			currMonkey.TestVal = int64(divisor)
 			currMonkey.Test = divisible
 		} else if strings.HasPrefix(line, "    If true: throw to monkey ") {
@@ -268,11 +269,13 @@ func (d *Day11) Part2() (interface{}, error) {
 		monkeys = append(monkeys, currMonkey)
 	}
 
+	for _, monkey := range monkeys {
+		monkey.SimplifyOperand = modulo
+	}
+
 	roundCount := 10000
 	for i := roundCount; i > 0; i-- {
 		for _, monkey := range monkeys {
-			monkey.ShouldMod = true
-			monkey.WorryDivisor = int64(div)
 			monkey.TestItems()
 		}
 	}
